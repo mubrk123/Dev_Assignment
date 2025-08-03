@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* Fix dropdown z-index */
+.rc-slider {
+  width: 100%;
+  padding: 8px 0;
+}
+
+/* Hide dropdown when clicking outside */
+body {
+  position: relative;
+}
