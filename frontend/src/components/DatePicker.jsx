@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -12,15 +12,6 @@ function BookingDatePicker({
 }) {
   const [dateRange, setDateRange] = useState(defaultDateRange);
   const [startDate, endDate] = dateRange;
-
-  useEffect(() => {
-    if (startDate && endDate) {
-      onChange?.({
-        checkIn: startDate.toISOString(),
-        checkOut: endDate.toISOString()
-      });
-    }
-  }, [startDate, endDate, onChange]);
 
   return (
     <div className={`mb-6 w-full ${wrapperClass}`}>
@@ -36,6 +27,13 @@ function BookingDatePicker({
         endDate={endDate}
         onChange={(update) => {
           setDateRange(update);
+          const [start, end] = update;
+          if (start && end) {
+            onChange?.({
+              checkIn: start.toISOString(),
+              checkOut: end.toISOString()
+            });
+          }
         }}
         minDate={new Date()}
         disabled={disabled}

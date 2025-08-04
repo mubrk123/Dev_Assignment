@@ -1,38 +1,58 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { AuthService } from '../services/api';
 
-export default function Header() {
-  const user = AuthService.getCurrentUser();
+function Header() {
+
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+ useEffect(() => {
+  const updateUser = () => setUser(AuthService.getCurrentUser());
+
+    window.addEventListener('authChange', updateUser);
+    return () => window.removeEventListener('authChange', updateUser);
+  // const storedUser = localStorage.getItem('user');
+  // try {
+  //   if (storedUser && storedUser !== "undefined") {
+  //     setUser(JSON.parse(storedUser));
+  //   }
+  // } catch (err) {
+  //   console.error("Error parsing user from localStorage:", err);
+  //   localStorage.removeItem('user');
+  // }
+}, []);
+
+
+  const handleLogout = () => {
+    window.dispatchEvent(new Event('authChange'));
+    localStorage.removeItem('user');
+    setUser(null);
+    navigate('/');
+  };
 
   return (
-    <header className="bg-blue-600 text-white shadow-md">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link to="/" className="text-xl font-bold">FranceHolidays</Link>
-        <nav>
-          <ul className="flex items-center space-x-6">
-            {user ? (
-              <li className="flex items-center space-x-4">
-                <span className="hidden sm:inline">Hello, {user.name}</span>
-                <button
-                  onClick={AuthService.logout}
-                  className="px-3 py-1 bg-blue-700 rounded hover:bg-blue-800 transition"
-                >
-                  Logout
-                </button>
-              </li>
-            ) : (
-              <>
-                <li>
-                  <Link to="/login" className="hover:underline">Login</Link>
-                </li>
-                <li>
-                  <Link to="/signup" className="hover:underline">Sign Up</Link>
-                </li>
-              </>
-            )}
-          </ul>
-        </nav>
+    <header className="bg-gray-100 py-4 shadow-md">
+      <div className="container mx-auto flex justify-between items-center px-4">
+        <Link to="/" className="text-2xl font-bold text-blue-600">StayInn</Link>
+        <div className="flex items-center space-x-4">
+          {user ? (
+            <>
+              <span className="font-medium">Hi,{user.name}</span>
+              <button onClick={handleLogout} title="Logout">
+                {/* //<img src="/icons/logout.svg" alt="Logout" className="w-5 h-5" /> */}
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="text-blue-600 hover:underline">Login</Link>
+              <Link to="/signup" className="text-blue-600 hover:underline">Signup</Link>
+            </>
+          )}
+        </div>
       </div>
     </header>
   );
 }
+export default Header ;

@@ -38,17 +38,20 @@ export const AuthService = {
     const response = await api.post('/register', userData);
     localStorage.setItem('token', response.data.token);
     localStorage.setItem('user', JSON.stringify(response.data.user));
+    window.dispatchEvent(new Event('authChange'));
     return response.data;
   },
   login: async (credentials) => {
     const response = await api.post('/login', credentials);
     localStorage.setItem('token', response.data.token);
     localStorage.setItem('user', JSON.stringify(response.data.user));
+    window.dispatchEvent(new Event('authChange'));
     return response.data;
   },
   logout: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    window.dispatchEvent(new Event('authChange'));
     delete api.defaults.headers.common['Authorization'];
   },
  getCurrentUser: () => {
